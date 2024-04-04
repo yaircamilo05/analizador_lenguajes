@@ -128,21 +128,21 @@ gramatica2 = {
 }
 
 gramatica3 = {
-    'S': {('P', 'R'),},
-    'P': {'a'},
-    'R': {'c'},
+    'S': ['PR'],
+    'P': ['a'],
+    'R': ['c'],
 }
 
 gramatica4 = {
-    'S': {('X', 'A'), ('Y', 'B')},
-    'A': {'a', ('Z', 'S'), ('U', 'A')},
-    'B': {'b', ('V', 'S'), ('W', 'B')},
-    'X': {'a'},
-    'Y': {'b'},
-    'Z': {'a'},
-    'U': {'b'},
-    'V': {'b'},
-    'W': {'a'},
+    'S': ['XA', 'YB'],
+    'A': ['a','ZY','UW'],
+    'B': ['b','VX','WU'],
+    'X': ['a'],
+    'Y': ['b'],
+    'Z': ['a'],
+    'U': ['b'],
+    'V': ['b'],
+    'W': ['a'],
 }
 
 gramatica5 = {
@@ -157,15 +157,15 @@ if __name__ == '__main__':
     print('ANALIZADOR DE GRAMÁTICA')
     print()
 
-    print('GRAMÁTICA INICIAL\n', gramatica)
+    print('GRAMÁTICA INICIAL\n', gramatica4)
     print()
 
     print('ELIMINAR RECURSIÓN IZQUIERDA')
-    gramaticaSinRecursion = eliminar_recursion_izquierda(gramatica)
+    gramaticaSinRecursion = eliminar_recursion_izquierda(gramatica4)
     print('Gramática sin recursión izquierda: \n', gramaticaSinRecursion)
     print()
 
     print('VERIFICAR PALABRA')
-    palabra = 'ba'
+    palabra = 'bab'
     print('Palabra a verificar:', palabra)
     verificarPalabra = cyk(gramaticaSinRecursion, palabra)
