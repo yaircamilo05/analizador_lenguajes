@@ -1,34 +1,48 @@
-# VERIFICAR PALABRA EN LA GRAMÁTICA 
+# Algoritmo CYK (Cocke-Younger-Kasami):
+# El algoritmo CYK es un algoritmo de parsing (análisis sintáctico) para determinar si una cadena pertenece a una gramática libre de contexto. 
+# Funciona construyendo una tabla de conjuntos de símbolos no terminales que pueden derivar subcadenas de la palabra dada.
+# La tabla se llena dinámicamente utilizando las producciones de la gramática, y se verifican todas las combinaciones de subcadenas posibles 
+# para cada longitud y posición en la palabra. Si la producción inicial ('S') se encuentra en la última fila y primera columna de la tabla, 
+# entonces la palabra es generada por la gramática. Si la palabra es aceptada, el algoritmo también puede reconstruir un árbol de derivación 
+# para mostrar cómo se generó la palabra a partir de la gramática.
 def cyk(gramatica, palabra):
-    n = len(palabra)
-    P = [[set() for j in range(n - i)] for i in range(n)]
-    derivaciones = [[{} for j in range(n - i)] for i in range(n)]
+    n = len(palabra)  # Obtiene la longitud de la palabra
+    P = [[set() for j in range(n - i)] for i in range(n)]  # Inicializa una matriz de conjuntos vacíos para almacenar los símbolos no terminales que generan subcadenas de la palabra
+    derivaciones = [[{} for j in range(n - i)] for i in range(n)]  # Inicializa una matriz de diccionarios para almacenar las derivaciones de cada símbolo no terminal
 
+    # Paso 1: Se buscan producciones unitarias
     for i, letra in enumerate(palabra):
         for izquierda, derechas in gramatica.items():
             if letra in derechas:
+                # Si la letra actual está en las producciones de la gramática, se agrega el símbolo no terminal correspondiente a la posición [0][i] de la matriz P
                 P[0][i].add(izquierda)
+                # Se registra la derivación correspondiente en el diccionario de derivaciones
                 derivaciones[0][i][izquierda] = letra
 
-    for longitud in range(2, n + 1):  
-        for i in range(n - longitud + 1):  
-            for k in range(1, longitud):  
+    # Paso 2: Se buscan producciones binarias
+    for longitud in range(2, n + 1):  # Recorre todas las longitudes posibles de subcadenas
+        for i in range(n - longitud + 1):  # Recorre todas las posiciones de inicio de las subcadenas de longitud dada
+            for k in range(1, longitud):  # Recorre todas las posibles divisiones de la subcadena en dos partes
                 for A, Bs in gramatica.items():
                     for B in Bs:
                         if len(B) == 2:
                             B1, B2 = B
+                            # Si se encuentra una producción de la forma A -> B1 B2 que pueda generar las subcadenas correspondientes,
+                            # se agrega el símbolo no terminal A a la posición [longitud - 1][i] de la matriz P
                             if B1 in P[k - 1][i] and B2 in P[longitud - k - 1][i + k]:
                                 P[longitud - 1][i].add(A)
+                                # Se registra la derivación correspondiente en el diccionario de derivaciones
                                 derivaciones[longitud - 1][i][A] = (B1, B2, k, i)
 
+    # Paso 3: Se verifica si la cadena es generada por el símbolo inicial de la gramática
     if 'S' in P[-1][0]:
         print("La palabra PERTENECE a la gramática.")
         print()
         print("ÁRBOL DE DERIVACIÓN:")
         imprimir_derivaciones(derivaciones, 'S', 0, n - 1)
-
     else:
         print("La palabra NO PERTENECE a la gramática.")
+
 
 # IMPRIMIR EL ÁRBOL DE DERIVACIONES DE LA PALABRA EN CASO DE PERTENCER
 # A LA GRAMÁTICA 
